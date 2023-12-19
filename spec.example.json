@@ -1,0 +1,104 @@
+{
+    "data": [
+        {
+            "provider": "chrono",
+            "repository": "product-profitability",
+            "name": "product-profitability",
+            "manifest": {
+                "currency": "EUR",
+                "selects": [
+                    "bin",
+                    "time",
+                    "financial_entry_type",
+                    "amount"
+                ],
+                "filters": {
+                    "time": {
+                        "between": [
+                            "2023-08-09",
+                            "2023-10-09"
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "procedure": [
+        {
+            "step-name": "series",
+            "procedure-name": "time-series.py",
+            "entrypoint": "TimeSeriesGapFill",
+            "arguments": {
+                "data": {
+                    "value": "data.product-profitability",
+                    "type": "string"
+                },
+                "time_column": {
+                    "value": "time",
+                    "type": "string"
+                },
+                "amount": {
+                    "value": "amount",
+                    "type": "string"
+                },
+                "group_by": {
+                    "value": ["financial_entry_type", "bin"],
+                    "type": ["string"]
+                }
+            }
+        },
+        {
+            "step-name": "profit",
+            "procedure-name": "profit.py",
+            "entrypoint": "Profit",
+            "arguments": {
+                "data": {
+                    "value": "procedure.series",
+                    "type": "string"
+                },
+                "amount": {
+                    "value": "amount",
+                    "type": "string"
+                },
+                "group_by": {
+                    "value": ["time", "bin"],
+                    "type": ["string"]
+                }
+            }
+        },
+        {
+            "step-name": "margin",
+            "procedure-name": "margin.py",
+            "entrypoint": "Margin",
+            "arguments": {
+                "data": {
+                    "value": "procedure.series",
+                    "type": "string"
+                },
+                "amount": {
+                    "value": "amount",
+                    "type": "string"
+                },
+                "group_by": {
+                    "value": ["time", "bin"],
+                    "type": ["string"]
+                }
+            }
+        },
+        {
+            "step-name": "merge",
+            "procedure-name": "merger.py",
+            "entrypoint": "Merge",
+            "arguments": {
+                "data": {
+                    "value": ["procedure.profit", "procedure.margin"],
+                    "type": ["string"]
+                },
+                "group_by": {
+                    "value": ["time", "bin"],
+                    "type": ["string"]
+                }
+            }
+        }
+    ]
+}

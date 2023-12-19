@@ -1,0 +1,8 @@
+**/*.exe
+version.txt
+
+go-swagger/*
+go-aoapi3/*
+
+*credentials_test.go
+.env

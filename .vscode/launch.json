@@ -1,0 +1,56 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Go WSL",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "host": "127.0.0.1",
+            "program": "${workspaceFolder}/cmd",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "run"
+            ],
+            "env": {
+                // "IGNORE_DISABLED": true
+                "CGO_CFLAGS": "-I/usr/include/python3.7",
+                "CGO_LDFLAGS": "-L/usr/lib/python3.7/config-3.7m-x86_64-linux-gnu/ -lpython3.7",
+                "PKG_CONFIG_PATH": "/mnt/a/Windows/Users/Luscha/Desktop/GIT/Personal/pitagora/go-pitagora"
+            },
+            "showLog": true,
+            //"debugAdapter": "legacy",
+            "dlvFlags" : ["--only-same-user=false"],
+            // "logOutput": "dap,debugger",
+            // "logOutput": "debugger",
+            "dlvLoadConfig": {
+                "followPointers": true,
+                "maxVariableRecurse": 1,
+                "maxStringLen": 5120,
+                "maxArrayValues": 64,
+                "maxStructFields": -1
+            },
+        },
+        {
+            "name": "Attach to Go",
+            "type": "go",
+            "request": "attach",
+            "mode": "remote",
+            "remotePath": "${workspaceFolder}",
+            "port": 48192,
+            "host": "127.0.0.1",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
