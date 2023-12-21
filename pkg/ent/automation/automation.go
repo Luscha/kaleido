@@ -19,6 +19,8 @@ const (
 	FieldTrigger = "trigger"
 	// FieldManifest holds the string denoting the manifest field in the database.
 	FieldManifest = "manifest"
+	// FieldEnabled holds the string denoting the enabled field in the database.
+	FieldEnabled = "enabled"
 	// Table holds the table name of the automation in the database.
 	Table = "automation"
 )
@@ -30,6 +32,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldTrigger,
 	FieldManifest,
+	FieldEnabled,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -68,4 +71,9 @@ func ByTrigger(opts ...sql.OrderTermOption) OrderOption {
 // ByManifest orders the results by the manifest field.
 func ByManifest(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldManifest, opts...).ToFunc()
+}
+
+// ByEnabled orders the results by the enabled field.
+func ByEnabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEnabled, opts...).ToFunc()
 }

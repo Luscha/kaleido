@@ -11,6 +11,8 @@ import (
 	"time"
 
 	python "github.pitagora/pkg/python3"
+	"github.pitagora/pkg/storage"
+	"gitlab.com/technity/go-x/pkg/connection"
 	"gitlab.com/technity/go-x/pkg/logger"
 )
 
@@ -54,7 +56,38 @@ func loadPyFile(name string) (string, error) {
 	return string(data), nil
 }
 
-func Transform(ctx context.Context, proc Procedure, intermediateRes *sync.Map, results chan<- Result) {
+type MacroHandler struct {
+	conn   *connection.ConnectionManager[*storage.Client]
+	tenant string
+}
+
+func NewMacroHandler(conn *connection.ConnectionManager[*storage.Client], tenant string) *MacroHandler {
+	return &MacroHandler{
+		conn:   conn,
+		tenant: tenant,
+	}
+}
+
+// TODO make handler a manager and fetch bulk
+func (m *MacroHandler) FetchCode(ctx context.Context, name string) (string, error) {
+	// fetch procedure
+	cl, err := m.conn.Borrow(ctx, m.tenant)
+	if err != nil {
+		return "", err
+	}
+	defer m.conn.Release(ctx, m.tenant)
+	macro, err := cl.GetMacros(ctx, []string{name})
+	if err != nil {
+		return "", err
+	}
+
+	if len(macro) != 1 {
+		panic("could not get macro code")
+	}
+	return macro[0].Code, nil
+}
+
+func (m *MacroHandler) Transform(ctx context.Context, proc Procedure, intermediateRes *sync.Map, results chan<- Result) {
 	runtime.LockOSThread()
 
 	fmt.Printf("Transform GIL %v\n", python.PyGILState_Check())
@@ -68,7 +101,7 @@ func Transform(ctx context.Context, proc Procedure, intermediateRes *sync.Map, r
 
 	startTime := time.Now()
 	// Open the file
-	source, err := loadPyFile(proc.ProcedureName)
+	source, err := m.FetchCode(ctx, proc.ProcedureName)
 	if err != nil {
 		results <- Result{ID: proc.StepName, Err: err}
 		return

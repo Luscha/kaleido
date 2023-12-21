@@ -55,16 +55,16 @@ func (pu *ProcedureUpdate) SetNillableMetadata(s *string) *ProcedureUpdate {
 	return pu
 }
 
-// SetCode sets the "code" field.
-func (pu *ProcedureUpdate) SetCode(s string) *ProcedureUpdate {
-	pu.mutation.SetCode(s)
+// SetManifest sets the "manifest" field.
+func (pu *ProcedureUpdate) SetManifest(s string) *ProcedureUpdate {
+	pu.mutation.SetManifest(s)
 	return pu
 }
 
-// SetNillableCode sets the "code" field if the given value is not nil.
-func (pu *ProcedureUpdate) SetNillableCode(s *string) *ProcedureUpdate {
+// SetNillableManifest sets the "manifest" field if the given value is not nil.
+func (pu *ProcedureUpdate) SetNillableManifest(s *string) *ProcedureUpdate {
 	if s != nil {
-		pu.SetCode(*s)
+		pu.SetManifest(*s)
 	}
 	return pu
 }
@@ -116,8 +116,8 @@ func (pu *ProcedureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.Metadata(); ok {
 		_spec.SetField(procedure.FieldMetadata, field.TypeString, value)
 	}
-	if value, ok := pu.mutation.Code(); ok {
-		_spec.SetField(procedure.FieldCode, field.TypeString, value)
+	if value, ok := pu.mutation.Manifest(); ok {
+		_spec.SetField(procedure.FieldManifest, field.TypeString, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -167,16 +167,16 @@ func (puo *ProcedureUpdateOne) SetNillableMetadata(s *string) *ProcedureUpdateOn
 	return puo
 }
 
-// SetCode sets the "code" field.
-func (puo *ProcedureUpdateOne) SetCode(s string) *ProcedureUpdateOne {
-	puo.mutation.SetCode(s)
+// SetManifest sets the "manifest" field.
+func (puo *ProcedureUpdateOne) SetManifest(s string) *ProcedureUpdateOne {
+	puo.mutation.SetManifest(s)
 	return puo
 }
 
-// SetNillableCode sets the "code" field if the given value is not nil.
-func (puo *ProcedureUpdateOne) SetNillableCode(s *string) *ProcedureUpdateOne {
+// SetNillableManifest sets the "manifest" field if the given value is not nil.
+func (puo *ProcedureUpdateOne) SetNillableManifest(s *string) *ProcedureUpdateOne {
 	if s != nil {
-		puo.SetCode(*s)
+		puo.SetManifest(*s)
 	}
 	return puo
 }
@@ -258,8 +258,8 @@ func (puo *ProcedureUpdateOne) sqlSave(ctx context.Context) (_node *Procedure, e
 	if value, ok := puo.mutation.Metadata(); ok {
 		_spec.SetField(procedure.FieldMetadata, field.TypeString, value)
 	}
-	if value, ok := puo.mutation.Code(); ok {
-		_spec.SetField(procedure.FieldCode, field.TypeString, value)
+	if value, ok := puo.mutation.Manifest(); ok {
+		_spec.SetField(procedure.FieldManifest, field.TypeString, value)
 	}
 	_node = &Procedure{config: puo.config}
 	_spec.Assign = _node.assignValues

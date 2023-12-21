@@ -1,0 +1,79 @@
+{
+	"trigger": {
+		"type": "CRON",
+		"name": "test-email",
+		"manifest": {
+			"expression": "*/1 * * * ? *"
+		}
+	},
+	"procedure": {
+		"real_procedure": [
+			{
+				"name": "profit-margin",
+				"reference": "profit-margin"
+			}
+		],
+		"procedure": [
+			{
+				"step-name": "linear-regression",
+				"procedure-name": "linear-regression.py",
+				"entrypoint": "LinearRegression",
+				"arguments": {
+					"data": {
+						"value": "real_procedure.profit-margin",
+						"type": "string"
+					},
+					"time_column": {
+						"value": "time",
+						"type": "string"
+					},
+					"metrics": {
+						"value": [
+							"profit",
+							"margin"
+						]
+					},
+					"days": {
+						"value": 100
+					},
+					"group_by": {
+						"value": [
+							"bin"
+						],
+						"type": [
+							"string"
+						]
+					}
+				}
+			}
+		]
+	},
+	"action": [
+		{
+			"type": "email",
+			"name": "alert-email",
+			"manifest": {
+				"to": "mroggia@technity.it",
+				"body": {
+					"html": "<html><body><h1>Hello!</h1><p>These products are not performing well:</p>|{|range array .bin|}|<a href='https://member.bokibee.ninja/#/products/bin/|{|.|}|'>|{|.|}|</a><br>|{|end|}|</body></html>",
+					"text": "Hello, These products are not performing well: |{|range array .bin|}||{|.|}|, |{|end|}|"
+				},
+				"subject": "Bokibee Alert"
+			},
+			"depends": [
+				{
+					"value": "procedure.root",
+					"template": ".bin"
+				}
+			]
+		}
+	],
+	"arguments": {
+		"real_procedure.profit-margin.data.product-profitability.select": "bin",
+		"real_procedure.profit-margin.procedure.series.group_by": "bin",
+		"real_procedure.profit-margin.procedure.profit.group_by": "bin",
+		"real_procedure.profit-margin.procedure.margin.group_by": "bin",
+		"real_procedure.profit-margin.procedure.merge.group_by": "bin",
+		"procedure.linear-regression.group_by": "bin"
+	}
+}

@@ -16,6 +16,7 @@ var (
 		{Name: "description", Type: field.TypeString},
 		{Name: "trigger", Type: field.TypeString},
 		{Name: "manifest", Type: field.TypeString},
+		{Name: "enabled", Type: field.TypeBool},
 	}
 	// AutomationTable holds the schema information for the "automation" table.
 	AutomationTable = &schema.Table{
@@ -43,7 +44,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString},
 		{Name: "metadata", Type: field.TypeString},
-		{Name: "code", Type: field.TypeString},
+		{Name: "manifest", Type: field.TypeString},
 	}
 	// ProcedureTable holds the schema information for the "procedure" table.
 	ProcedureTable = &schema.Table{

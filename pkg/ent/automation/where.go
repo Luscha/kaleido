@@ -72,6 +72,11 @@ func Manifest(v string) predicate.Automation {
 	return predicate.Automation(sql.FieldEQ(FieldManifest, v))
 }
 
+// Enabled applies equality check predicate on the "enabled" field. It's identical to EnabledEQ.
+func Enabled(v bool) predicate.Automation {
+	return predicate.Automation(sql.FieldEQ(FieldEnabled, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Automation {
 	return predicate.Automation(sql.FieldEQ(FieldName, v))
@@ -330,6 +335,16 @@ func ManifestEqualFold(v string) predicate.Automation {
 // ManifestContainsFold applies the ContainsFold predicate on the "manifest" field.
 func ManifestContainsFold(v string) predicate.Automation {
 	return predicate.Automation(sql.FieldContainsFold(FieldManifest, v))
+}
+
+// EnabledEQ applies the EQ predicate on the "enabled" field.
+func EnabledEQ(v bool) predicate.Automation {
+	return predicate.Automation(sql.FieldEQ(FieldEnabled, v))
+}
+
+// EnabledNEQ applies the NEQ predicate on the "enabled" field.
+func EnabledNEQ(v bool) predicate.Automation {
+	return predicate.Automation(sql.FieldNEQ(FieldEnabled, v))
 }
 
 // And groups predicates with the AND operator between them.

@@ -23,7 +23,9 @@ type Automation struct {
 	// Trigger holds the value of the "trigger" field.
 	Trigger string `json:"trigger,omitempty"`
 	// Manifest holds the value of the "manifest" field.
-	Manifest     string `json:"manifest,omitempty"`
+	Manifest string `json:"manifest,omitempty"`
+	// Enabled holds the value of the "enabled" field.
+	Enabled      bool `json:"enabled,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -32,6 +34,8 @@ func (*Automation) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case automation.FieldEnabled:
+			values[i] = new(sql.NullBool)
 		case automation.FieldID:
 			values[i] = new(sql.NullInt64)
 		case automation.FieldName, automation.FieldDescription, automation.FieldTrigger, automation.FieldManifest:
@@ -81,6 +85,12 @@ func (a *Automation) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.Manifest = value.String
 			}
+		case automation.FieldEnabled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field enabled", values[i])
+			} else if value.Valid {
+				a.Enabled = value.Bool
+			}
 		default:
 			a.selectValues.Set(columns[i], values[i])
 		}
@@ -128,6 +138,9 @@ func (a *Automation) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("manifest=")
 	builder.WriteString(a.Manifest)
+	builder.WriteString(", ")
+	builder.WriteString("enabled=")
+	builder.WriteString(fmt.Sprintf("%v", a.Enabled))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -27,6 +27,7 @@ func (Automation) Fields() []ent.Field {
 		field.String("description"),
 		field.String("trigger"),
 		field.String("manifest"),
+		field.Bool("enabled"),
 	}
 }
 

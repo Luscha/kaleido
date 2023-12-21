@@ -69,6 +69,20 @@ func (au *AutomationUpdate) SetNillableManifest(s *string) *AutomationUpdate {
 	return au
 }
 
+// SetEnabled sets the "enabled" field.
+func (au *AutomationUpdate) SetEnabled(b bool) *AutomationUpdate {
+	au.mutation.SetEnabled(b)
+	return au
+}
+
+// SetNillableEnabled sets the "enabled" field if the given value is not nil.
+func (au *AutomationUpdate) SetNillableEnabled(b *bool) *AutomationUpdate {
+	if b != nil {
+		au.SetEnabled(*b)
+	}
+	return au
+}
+
 // Mutation returns the AutomationMutation object of the builder.
 func (au *AutomationUpdate) Mutation() *AutomationMutation {
 	return au.mutation
@@ -118,6 +132,9 @@ func (au *AutomationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.Manifest(); ok {
 		_spec.SetField(automation.FieldManifest, field.TypeString, value)
+	}
+	if value, ok := au.mutation.Enabled(); ok {
+		_spec.SetField(automation.FieldEnabled, field.TypeBool, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -177,6 +194,20 @@ func (auo *AutomationUpdateOne) SetManifest(s string) *AutomationUpdateOne {
 func (auo *AutomationUpdateOne) SetNillableManifest(s *string) *AutomationUpdateOne {
 	if s != nil {
 		auo.SetManifest(*s)
+	}
+	return auo
+}
+
+// SetEnabled sets the "enabled" field.
+func (auo *AutomationUpdateOne) SetEnabled(b bool) *AutomationUpdateOne {
+	auo.mutation.SetEnabled(b)
+	return auo
+}
+
+// SetNillableEnabled sets the "enabled" field if the given value is not nil.
+func (auo *AutomationUpdateOne) SetNillableEnabled(b *bool) *AutomationUpdateOne {
+	if b != nil {
+		auo.SetEnabled(*b)
 	}
 	return auo
 }
@@ -260,6 +291,9 @@ func (auo *AutomationUpdateOne) sqlSave(ctx context.Context) (_node *Automation,
 	}
 	if value, ok := auo.mutation.Manifest(); ok {
 		_spec.SetField(automation.FieldManifest, field.TypeString, value)
+	}
+	if value, ok := auo.mutation.Enabled(); ok {
+		_spec.SetField(automation.FieldEnabled, field.TypeBool, value)
 	}
 	_node = &Automation{config: auo.config}
 	_spec.Assign = _node.assignValues

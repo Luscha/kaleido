@@ -1,0 +1,47 @@
+{
+	"real_procedure": [
+		{
+			"name": "profit-margin",
+			"reference": "profit-margin"
+		}
+	],
+	"procedure": [
+		{
+			"step-name": "linear-regression",
+			"procedure-name": "linear-regression.py",
+			"entrypoint": "LinearRegression",
+			"arguments": {
+				"data": {
+					"value": "real_procedure.profit-margin",
+					"type": "string"
+				},
+				"time_column": {
+					"value": "time",
+					"type": "string"
+				},
+				"metrics": {
+					"value": ["profit", "margin"]
+				},
+				"days": {
+					"value": 100
+				},
+				"group_by": {
+					"value": [
+						"bin"
+					],
+					"type": [
+						"string"
+					]
+				}
+			}
+		}
+	],
+	"arguments": {
+		"real_procedure.profit-margin.data.product-profitability.select": "bin",
+		"real_procedure.profit-margin.procedure.series.group_by": "bin",
+		"real_procedure.profit-margin.procedure.profit.group_by": "bin",
+		"real_procedure.profit-margin.procedure.margin.group_by": "bin",
+		"real_procedure.profit-margin.procedure.merge.group_by": "bin",
+		"procedure.linear-regression.group_by": "bin"
+	}
+}

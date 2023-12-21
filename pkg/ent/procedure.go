@@ -22,8 +22,8 @@ type Procedure struct {
 	Description string `json:"description,omitempty"`
 	// Metadata holds the value of the "metadata" field.
 	Metadata string `json:"metadata,omitempty"`
-	// Code holds the value of the "code" field.
-	Code         string `json:"code,omitempty"`
+	// Manifest holds the value of the "manifest" field.
+	Manifest     string `json:"manifest,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -34,7 +34,7 @@ func (*Procedure) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case procedure.FieldID:
 			values[i] = new(sql.NullInt64)
-		case procedure.FieldName, procedure.FieldDescription, procedure.FieldMetadata, procedure.FieldCode:
+		case procedure.FieldName, procedure.FieldDescription, procedure.FieldMetadata, procedure.FieldManifest:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -75,11 +75,11 @@ func (pr *Procedure) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pr.Metadata = value.String
 			}
-		case procedure.FieldCode:
+		case procedure.FieldManifest:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field code", values[i])
+				return fmt.Errorf("unexpected type %T for field manifest", values[i])
 			} else if value.Valid {
-				pr.Code = value.String
+				pr.Manifest = value.String
 			}
 		default:
 			pr.selectValues.Set(columns[i], values[i])
@@ -126,8 +126,8 @@ func (pr *Procedure) String() string {
 	builder.WriteString("metadata=")
 	builder.WriteString(pr.Metadata)
 	builder.WriteString(", ")
-	builder.WriteString("code=")
-	builder.WriteString(pr.Code)
+	builder.WriteString("manifest=")
+	builder.WriteString(pr.Manifest)
 	builder.WriteByte(')')
 	return builder.String()
 }

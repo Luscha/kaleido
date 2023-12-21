@@ -2,6 +2,7 @@ package transformer
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 	"sync"
 
@@ -112,12 +113,30 @@ func (executor *PythonExecutor) CompileUserCode(userCode string) {
 
 // ExecuteUserCode executes the given compiled user code.
 func (executor *PythonExecutor) ExecuteUserCode(entrypoint string, args map[string]Argument, intermediateRes *sync.Map) []byte {
+	if executor.name == "linear-regression.py" {
+		fmt.Println("here")
+	}
 	fmt.Printf("-----ExecuteUserCode : %s\n", executor.name)
 	pyargs := executor.BuildUserCodeArgs(args, intermediateRes)
 
 	localEnv := python.PyDict_New()
 	executor.AddObject(localEnv)
 
+	// ! TODO investigate how to make import work
+	// if the script imports something like
+	//     from sklearn.linear_model import LinearRegression as lr
+	// outside the function, the import gets correctly loaded in localEnv but is not availbale in the function
+	//
+	// from sklearn.linear_model import LinearRegression as lr
+	// def LinearRegression(params):
+	//		model = lr()
+	//
+	// ^ will throw
+	//
+	// def LinearRegression(params):
+	// 		from sklearn.linear_model import LinearRegression as lr
+	//		model = lr()
+	// ^ won't throw
 	// Execute the compiled user code
 	if python.PyEval_EvalCode(executor.compiledCode, globals, localEnv) == nil {
 		fmt.Println("Error running the compiled code")
@@ -140,6 +159,7 @@ func (executor *PythonExecutor) ExecuteUserCode(entrypoint string, args map[stri
 	result := fn.CallFunctionObjArgs(pyargs)
 	if result == nil {
 		fmt.Printf("Error calling the %s function\n", entrypoint)
+		// !TODO exepction catch and print
 		python.PyErr_Print()
 		return nil
 	}
@@ -210,7 +230,16 @@ func (executor *PythonExecutor) convertToPyObject(value interface{}, intermediat
 
 	case reflect.Float32, reflect.Float64:
 		// Handle floats
-		return python.PyFloat_FromDouble(reflect.ValueOf(value).Float()), false
+		floatValue := reflect.ValueOf(value).Float()
+
+		// Check if the float value is a whole number and within the int64 range
+		if floatValue == math.Trunc(floatValue) && floatValue <= math.MaxInt64 && floatValue >= math.MinInt64 {
+			// Convert to int64 and create a Python integer object
+			return python.PyLong_FromLongLong(int64(floatValue)), false
+		} else {
+			// Create a Python float object
+			return python.PyFloat_FromDouble(floatValue), false
+		}
 
 	case reflect.Bool:
 		// Handle booleans

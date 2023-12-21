@@ -39,9 +39,9 @@ func (pc *ProcedureCreate) SetMetadata(s string) *ProcedureCreate {
 	return pc
 }
 
-// SetCode sets the "code" field.
-func (pc *ProcedureCreate) SetCode(s string) *ProcedureCreate {
-	pc.mutation.SetCode(s)
+// SetManifest sets the "manifest" field.
+func (pc *ProcedureCreate) SetManifest(s string) *ProcedureCreate {
+	pc.mutation.SetManifest(s)
 	return pc
 }
 
@@ -94,8 +94,8 @@ func (pc *ProcedureCreate) check() error {
 	if _, ok := pc.mutation.Metadata(); !ok {
 		return &ValidationError{Name: "metadata", err: errors.New(`ent: missing required field "Procedure.metadata"`)}
 	}
-	if _, ok := pc.mutation.Code(); !ok {
-		return &ValidationError{Name: "code", err: errors.New(`ent: missing required field "Procedure.code"`)}
+	if _, ok := pc.mutation.Manifest(); !ok {
+		return &ValidationError{Name: "manifest", err: errors.New(`ent: missing required field "Procedure.manifest"`)}
 	}
 	return nil
 }
@@ -142,9 +142,9 @@ func (pc *ProcedureCreate) createSpec() (*Procedure, *sqlgraph.CreateSpec) {
 		_spec.SetField(procedure.FieldMetadata, field.TypeString, value)
 		_node.Metadata = value
 	}
-	if value, ok := pc.mutation.Code(); ok {
-		_spec.SetField(procedure.FieldCode, field.TypeString, value)
-		_node.Code = value
+	if value, ok := pc.mutation.Manifest(); ok {
+		_spec.SetField(procedure.FieldManifest, field.TypeString, value)
+		_node.Manifest = value
 	}
 	return _node, _spec
 }
@@ -222,15 +222,15 @@ func (u *ProcedureUpsert) UpdateMetadata() *ProcedureUpsert {
 	return u
 }
 
-// SetCode sets the "code" field.
-func (u *ProcedureUpsert) SetCode(v string) *ProcedureUpsert {
-	u.Set(procedure.FieldCode, v)
+// SetManifest sets the "manifest" field.
+func (u *ProcedureUpsert) SetManifest(v string) *ProcedureUpsert {
+	u.Set(procedure.FieldManifest, v)
 	return u
 }
 
-// UpdateCode sets the "code" field to the value that was provided on create.
-func (u *ProcedureUpsert) UpdateCode() *ProcedureUpsert {
-	u.SetExcluded(procedure.FieldCode)
+// UpdateManifest sets the "manifest" field to the value that was provided on create.
+func (u *ProcedureUpsert) UpdateManifest() *ProcedureUpsert {
+	u.SetExcluded(procedure.FieldManifest)
 	return u
 }
 
@@ -313,17 +313,17 @@ func (u *ProcedureUpsertOne) UpdateMetadata() *ProcedureUpsertOne {
 	})
 }
 
-// SetCode sets the "code" field.
-func (u *ProcedureUpsertOne) SetCode(v string) *ProcedureUpsertOne {
+// SetManifest sets the "manifest" field.
+func (u *ProcedureUpsertOne) SetManifest(v string) *ProcedureUpsertOne {
 	return u.Update(func(s *ProcedureUpsert) {
-		s.SetCode(v)
+		s.SetManifest(v)
 	})
 }
 
-// UpdateCode sets the "code" field to the value that was provided on create.
-func (u *ProcedureUpsertOne) UpdateCode() *ProcedureUpsertOne {
+// UpdateManifest sets the "manifest" field to the value that was provided on create.
+func (u *ProcedureUpsertOne) UpdateManifest() *ProcedureUpsertOne {
 	return u.Update(func(s *ProcedureUpsert) {
-		s.UpdateCode()
+		s.UpdateManifest()
 	})
 }
 
@@ -571,17 +571,17 @@ func (u *ProcedureUpsertBulk) UpdateMetadata() *ProcedureUpsertBulk {
 	})
 }
 
-// SetCode sets the "code" field.
-func (u *ProcedureUpsertBulk) SetCode(v string) *ProcedureUpsertBulk {
+// SetManifest sets the "manifest" field.
+func (u *ProcedureUpsertBulk) SetManifest(v string) *ProcedureUpsertBulk {
 	return u.Update(func(s *ProcedureUpsert) {
-		s.SetCode(v)
+		s.SetManifest(v)
 	})
 }
 
-// UpdateCode sets the "code" field to the value that was provided on create.
-func (u *ProcedureUpsertBulk) UpdateCode() *ProcedureUpsertBulk {
+// UpdateManifest sets the "manifest" field to the value that was provided on create.
+func (u *ProcedureUpsertBulk) UpdateManifest() *ProcedureUpsertBulk {
 	return u.Update(func(s *ProcedureUpsert) {
-		s.UpdateCode()
+		s.UpdateManifest()
 	})
 }
 

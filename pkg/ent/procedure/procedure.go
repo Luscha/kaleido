@@ -17,8 +17,8 @@ const (
 	FieldDescription = "description"
 	// FieldMetadata holds the string denoting the metadata field in the database.
 	FieldMetadata = "metadata"
-	// FieldCode holds the string denoting the code field in the database.
-	FieldCode = "code"
+	// FieldManifest holds the string denoting the manifest field in the database.
+	FieldManifest = "manifest"
 	// Table holds the table name of the procedure in the database.
 	Table = "procedure"
 )
@@ -29,7 +29,7 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldMetadata,
-	FieldCode,
+	FieldManifest,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -65,7 +65,7 @@ func ByMetadata(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMetadata, opts...).ToFunc()
 }
 
-// ByCode orders the results by the code field.
-func ByCode(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCode, opts...).ToFunc()
+// ByManifest orders the results by the manifest field.
+func ByManifest(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldManifest, opts...).ToFunc()
 }

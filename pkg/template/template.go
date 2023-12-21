@@ -19,6 +19,19 @@ func (a Arguments) HasArguments(nodeType node.NodeType, name string) bool {
 	return true
 }
 
+func (a Arguments) GetArgumentSubprocedure(name string) Arguments {
+	subprocedureArgs := Arguments{}
+	prefix := ArgumentPrefix(node.NODE_TYPE_SUB_PROCEDURE, name)
+	for k, v := range a {
+		if !strings.HasPrefix(k, prefix) {
+			continue
+		}
+
+		subprocedureArgs[strings.TrimPrefix(k, fmt.Sprintf("%s.", prefix))] = v
+	}
+	return subprocedureArgs
+}
+
 var reg = regexp.MustCompile(`"\|{\|(.*?)\|}\|"`)
 var regCurlOpen = regexp.MustCompile(`"{`)
 
@@ -28,6 +41,10 @@ func ArgumentPrefix(nodeType node.NodeType, name string) string {
 		return fmt.Sprintf("%s.%s", "data", name)
 	case node.NODE_TYPE_PROCEDURE:
 		return fmt.Sprintf("%s.%s", "procedure", name)
+	case node.NODE_TYPE_SUB_PROCEDURE:
+		return fmt.Sprintf("%s.%s", "real_procedure", name)
+	case node.NODE_TYPE_ACTION:
+		return fmt.Sprintf("%s.%s", "action", name)
 	}
 	return ""
 }
@@ -58,6 +75,13 @@ func Resolve(in any, args Arguments, prefix string, out any) error {
 				return "null"
 			}
 			return fmt.Sprintf("\"%v\"", val)
+		},
+		"array": func(val interface{}) interface{} {
+			var result []any
+			if err := json.Unmarshal([]byte(val.(string)), &result); err == nil {
+				return result
+			}
+			return val
 		},
 	}
 

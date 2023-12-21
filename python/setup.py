@@ -1,13 +1,14 @@
-from RestrictedPython import compile_restricted
-from RestrictedPython.Guards import safe_builtins
+from RestrictedPython import safe_builtins, utility_builtins
+from RestrictedPython.Eval import default_guarded_getiter
+from RestrictedPython.Guards import guarded_iter_unpack_sequence, safer_getattr
 import json
 import pandas as pd
+import sklearn
+import numpy as np
+from datetime import datetime
 
 def custom_get_item(obj, key):
     return obj[key]
-
-def custom_get_iter(obj):
-    return iter(obj)
 
 def safe_setitem(obj, key, value):
     # Implement your logic to safely set items
@@ -22,58 +23,29 @@ def custom_write(obj):
 	"""
 	return obj
 
-# custom_safe_builtins = (
-# 	'sorted',
-# 	'reversed',
-# 	'map',
-# 	# 'reduce',
-# 	'any',
-# 	'all',
-# 	'slice',
-# 	'filter',
-# 	'len',
-# 	'next',
-# 	'enumerate',
-# 	'sum',
-# 	'abs',
-# 	'min',
-# 	'max',
-# 	'round',
-# 	# 'cmp',
-# 	'divmod',
-# 	'str',
-# 	# 'unicode',
-# 	'int',
-# 	'float',
-# 	'complex',
-# 	'tuple',
-# 	'set',
-# 	'list',
-# 	'dict',
-# 	'bool',
-# )
+def custom_import(name, globals=None, locals=None, fromlist=(), level=0):
+    if name.startswith('sklearn.'):
+        return __import__(name, globals, locals, fromlist, level)
+    raise ImportError(f"Import of '{name}' is not allowed")
 
 # Setup the restricted environment
-builtins = safe_builtins.copy()
-builtins["_getattr_"] = getattr
-builtins["getattr"] = getattr
+builtins = {}
+builtins['__import__'] = custom_import
+builtins['getattr'] = safer_getattr
+builtins['_getattr_'] = safer_getattr
 builtins["_setattr_"] = setattr
 builtins["setattr"] = setattr
 builtins["_getitem_"] = custom_get_item
-builtins["_getiter_"] = custom_get_iter
+builtins['_getiter_'] = default_guarded_getiter
+builtins['_iter_unpack_sequence_'] = guarded_iter_unpack_sequence
 builtins["_setitem_"] = safe_setitem
 builtins["_write_"] = custom_write
-builtins["len"] = len
-builtins["range"] = range
-builtins["list"] = list
-builtins["dict"] = dict
-builtins["print"] = print  # Add print to the builtins
-
-# Layer in our own additional set of builtins that we have
-# considered safe.
-# for key in custom_safe_builtins:
-# 	builtins[key] = __builtins__[key]
+builtins.update(safe_builtins)
+builtins.update(utility_builtins)
 
 safe_globals = dict(__builtins__=builtins)
 safe_globals['json'] = json
 safe_globals['pd'] = pd
+safe_globals['sklearn'] = sklearn
+safe_globals['np'] = np
+safe_globals['datetime'] = datetime

@@ -45,6 +45,12 @@ func (ac *AutomationCreate) SetManifest(s string) *AutomationCreate {
 	return ac
 }
 
+// SetEnabled sets the "enabled" field.
+func (ac *AutomationCreate) SetEnabled(b bool) *AutomationCreate {
+	ac.mutation.SetEnabled(b)
+	return ac
+}
+
 // SetID sets the "id" field.
 func (ac *AutomationCreate) SetID(i int64) *AutomationCreate {
 	ac.mutation.SetID(i)
@@ -97,6 +103,9 @@ func (ac *AutomationCreate) check() error {
 	if _, ok := ac.mutation.Manifest(); !ok {
 		return &ValidationError{Name: "manifest", err: errors.New(`ent: missing required field "Automation.manifest"`)}
 	}
+	if _, ok := ac.mutation.Enabled(); !ok {
+		return &ValidationError{Name: "enabled", err: errors.New(`ent: missing required field "Automation.enabled"`)}
+	}
 	return nil
 }
 
@@ -145,6 +154,10 @@ func (ac *AutomationCreate) createSpec() (*Automation, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.Manifest(); ok {
 		_spec.SetField(automation.FieldManifest, field.TypeString, value)
 		_node.Manifest = value
+	}
+	if value, ok := ac.mutation.Enabled(); ok {
+		_spec.SetField(automation.FieldEnabled, field.TypeBool, value)
+		_node.Enabled = value
 	}
 	return _node, _spec
 }
@@ -231,6 +244,18 @@ func (u *AutomationUpsert) SetManifest(v string) *AutomationUpsert {
 // UpdateManifest sets the "manifest" field to the value that was provided on create.
 func (u *AutomationUpsert) UpdateManifest() *AutomationUpsert {
 	u.SetExcluded(automation.FieldManifest)
+	return u
+}
+
+// SetEnabled sets the "enabled" field.
+func (u *AutomationUpsert) SetEnabled(v bool) *AutomationUpsert {
+	u.Set(automation.FieldEnabled, v)
+	return u
+}
+
+// UpdateEnabled sets the "enabled" field to the value that was provided on create.
+func (u *AutomationUpsert) UpdateEnabled() *AutomationUpsert {
+	u.SetExcluded(automation.FieldEnabled)
 	return u
 }
 
@@ -324,6 +349,20 @@ func (u *AutomationUpsertOne) SetManifest(v string) *AutomationUpsertOne {
 func (u *AutomationUpsertOne) UpdateManifest() *AutomationUpsertOne {
 	return u.Update(func(s *AutomationUpsert) {
 		s.UpdateManifest()
+	})
+}
+
+// SetEnabled sets the "enabled" field.
+func (u *AutomationUpsertOne) SetEnabled(v bool) *AutomationUpsertOne {
+	return u.Update(func(s *AutomationUpsert) {
+		s.SetEnabled(v)
+	})
+}
+
+// UpdateEnabled sets the "enabled" field to the value that was provided on create.
+func (u *AutomationUpsertOne) UpdateEnabled() *AutomationUpsertOne {
+	return u.Update(func(s *AutomationUpsert) {
+		s.UpdateEnabled()
 	})
 }
 
@@ -582,6 +621,20 @@ func (u *AutomationUpsertBulk) SetManifest(v string) *AutomationUpsertBulk {
 func (u *AutomationUpsertBulk) UpdateManifest() *AutomationUpsertBulk {
 	return u.Update(func(s *AutomationUpsert) {
 		s.UpdateManifest()
+	})
+}
+
+// SetEnabled sets the "enabled" field.
+func (u *AutomationUpsertBulk) SetEnabled(v bool) *AutomationUpsertBulk {
+	return u.Update(func(s *AutomationUpsert) {
+		s.SetEnabled(v)
+	})
+}
+
+// UpdateEnabled sets the "enabled" field to the value that was provided on create.
+func (u *AutomationUpsertBulk) UpdateEnabled() *AutomationUpsertBulk {
+	return u.Update(func(s *AutomationUpsert) {
+		s.UpdateEnabled()
 	})
 }
 

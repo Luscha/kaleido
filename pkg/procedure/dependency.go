@@ -39,6 +39,7 @@ func buildNodeDependency(source string) (NodeDependency, error) {
 	return NodeDependency{Type: t, Name: name}, nil
 }
 
+// TODO subprocedure
 func buildDependencyTree(procedures []transformer.Procedure, sources []datasource.DataSource) (DependencyTree, error) {
 	nodes := make(DependencyTree)
 

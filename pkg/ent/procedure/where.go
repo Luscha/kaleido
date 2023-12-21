@@ -67,9 +67,9 @@ func Metadata(v string) predicate.Procedure {
 	return predicate.Procedure(sql.FieldEQ(FieldMetadata, v))
 }
 
-// Code applies equality check predicate on the "code" field. It's identical to CodeEQ.
-func Code(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldEQ(FieldCode, v))
+// Manifest applies equality check predicate on the "manifest" field. It's identical to ManifestEQ.
+func Manifest(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldEQ(FieldManifest, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -267,69 +267,69 @@ func MetadataContainsFold(v string) predicate.Procedure {
 	return predicate.Procedure(sql.FieldContainsFold(FieldMetadata, v))
 }
 
-// CodeEQ applies the EQ predicate on the "code" field.
-func CodeEQ(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldEQ(FieldCode, v))
+// ManifestEQ applies the EQ predicate on the "manifest" field.
+func ManifestEQ(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldEQ(FieldManifest, v))
 }
 
-// CodeNEQ applies the NEQ predicate on the "code" field.
-func CodeNEQ(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldNEQ(FieldCode, v))
+// ManifestNEQ applies the NEQ predicate on the "manifest" field.
+func ManifestNEQ(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldNEQ(FieldManifest, v))
 }
 
-// CodeIn applies the In predicate on the "code" field.
-func CodeIn(vs ...string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldIn(FieldCode, vs...))
+// ManifestIn applies the In predicate on the "manifest" field.
+func ManifestIn(vs ...string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldIn(FieldManifest, vs...))
 }
 
-// CodeNotIn applies the NotIn predicate on the "code" field.
-func CodeNotIn(vs ...string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldNotIn(FieldCode, vs...))
+// ManifestNotIn applies the NotIn predicate on the "manifest" field.
+func ManifestNotIn(vs ...string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldNotIn(FieldManifest, vs...))
 }
 
-// CodeGT applies the GT predicate on the "code" field.
-func CodeGT(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldGT(FieldCode, v))
+// ManifestGT applies the GT predicate on the "manifest" field.
+func ManifestGT(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldGT(FieldManifest, v))
 }
 
-// CodeGTE applies the GTE predicate on the "code" field.
-func CodeGTE(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldGTE(FieldCode, v))
+// ManifestGTE applies the GTE predicate on the "manifest" field.
+func ManifestGTE(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldGTE(FieldManifest, v))
 }
 
-// CodeLT applies the LT predicate on the "code" field.
-func CodeLT(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldLT(FieldCode, v))
+// ManifestLT applies the LT predicate on the "manifest" field.
+func ManifestLT(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldLT(FieldManifest, v))
 }
 
-// CodeLTE applies the LTE predicate on the "code" field.
-func CodeLTE(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldLTE(FieldCode, v))
+// ManifestLTE applies the LTE predicate on the "manifest" field.
+func ManifestLTE(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldLTE(FieldManifest, v))
 }
 
-// CodeContains applies the Contains predicate on the "code" field.
-func CodeContains(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldContains(FieldCode, v))
+// ManifestContains applies the Contains predicate on the "manifest" field.
+func ManifestContains(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldContains(FieldManifest, v))
 }
 
-// CodeHasPrefix applies the HasPrefix predicate on the "code" field.
-func CodeHasPrefix(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldHasPrefix(FieldCode, v))
+// ManifestHasPrefix applies the HasPrefix predicate on the "manifest" field.
+func ManifestHasPrefix(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldHasPrefix(FieldManifest, v))
 }
 
-// CodeHasSuffix applies the HasSuffix predicate on the "code" field.
-func CodeHasSuffix(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldHasSuffix(FieldCode, v))
+// ManifestHasSuffix applies the HasSuffix predicate on the "manifest" field.
+func ManifestHasSuffix(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldHasSuffix(FieldManifest, v))
 }
 
-// CodeEqualFold applies the EqualFold predicate on the "code" field.
-func CodeEqualFold(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldEqualFold(FieldCode, v))
+// ManifestEqualFold applies the EqualFold predicate on the "manifest" field.
+func ManifestEqualFold(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldEqualFold(FieldManifest, v))
 }
 
-// CodeContainsFold applies the ContainsFold predicate on the "code" field.
-func CodeContainsFold(v string) predicate.Procedure {
-	return predicate.Procedure(sql.FieldContainsFold(FieldCode, v))
+// ManifestContainsFold applies the ContainsFold predicate on the "manifest" field.
+func ManifestContainsFold(v string) predicate.Procedure {
+	return predicate.Procedure(sql.FieldContainsFold(FieldManifest, v))
 }
 
 // And groups predicates with the AND operator between them.

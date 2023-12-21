@@ -40,6 +40,7 @@ type AutomationMutation struct {
 	description   *string
 	trigger       *string
 	manifest      *string
+	enabled       *bool
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Automation, error)
@@ -294,6 +295,42 @@ func (m *AutomationMutation) ResetManifest() {
 	m.manifest = nil
 }
 
+// SetEnabled sets the "enabled" field.
+func (m *AutomationMutation) SetEnabled(b bool) {
+	m.enabled = &b
+}
+
+// Enabled returns the value of the "enabled" field in the mutation.
+func (m *AutomationMutation) Enabled() (r bool, exists bool) {
+	v := m.enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabled returns the old "enabled" field's value of the Automation entity.
+// If the Automation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AutomationMutation) OldEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabled: %w", err)
+	}
+	return oldValue.Enabled, nil
+}
+
+// ResetEnabled resets all changes to the "enabled" field.
+func (m *AutomationMutation) ResetEnabled() {
+	m.enabled = nil
+}
+
 // Where appends a list predicates to the AutomationMutation builder.
 func (m *AutomationMutation) Where(ps ...predicate.Automation) {
 	m.predicates = append(m.predicates, ps...)
@@ -328,7 +365,7 @@ func (m *AutomationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AutomationMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.name != nil {
 		fields = append(fields, automation.FieldName)
 	}
@@ -340,6 +377,9 @@ func (m *AutomationMutation) Fields() []string {
 	}
 	if m.manifest != nil {
 		fields = append(fields, automation.FieldManifest)
+	}
+	if m.enabled != nil {
+		fields = append(fields, automation.FieldEnabled)
 	}
 	return fields
 }
@@ -357,6 +397,8 @@ func (m *AutomationMutation) Field(name string) (ent.Value, bool) {
 		return m.Trigger()
 	case automation.FieldManifest:
 		return m.Manifest()
+	case automation.FieldEnabled:
+		return m.Enabled()
 	}
 	return nil, false
 }
@@ -374,6 +416,8 @@ func (m *AutomationMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldTrigger(ctx)
 	case automation.FieldManifest:
 		return m.OldManifest(ctx)
+	case automation.FieldEnabled:
+		return m.OldEnabled(ctx)
 	}
 	return nil, fmt.Errorf("unknown Automation field %s", name)
 }
@@ -410,6 +454,13 @@ func (m *AutomationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetManifest(v)
+		return nil
+	case automation.FieldEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabled(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Automation field %s", name)
@@ -471,6 +522,9 @@ func (m *AutomationMutation) ResetField(name string) error {
 		return nil
 	case automation.FieldManifest:
 		m.ResetManifest()
+		return nil
+	case automation.FieldEnabled:
+		m.ResetEnabled()
 		return nil
 	}
 	return fmt.Errorf("unknown Automation field %s", name)
@@ -1027,7 +1081,7 @@ type ProcedureMutation struct {
 	name          *string
 	description   *string
 	metadata      *string
-	code          *string
+	manifest      *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Procedure, error)
@@ -1246,40 +1300,40 @@ func (m *ProcedureMutation) ResetMetadata() {
 	m.metadata = nil
 }
 
-// SetCode sets the "code" field.
-func (m *ProcedureMutation) SetCode(s string) {
-	m.code = &s
+// SetManifest sets the "manifest" field.
+func (m *ProcedureMutation) SetManifest(s string) {
+	m.manifest = &s
 }
 
-// Code returns the value of the "code" field in the mutation.
-func (m *ProcedureMutation) Code() (r string, exists bool) {
-	v := m.code
+// Manifest returns the value of the "manifest" field in the mutation.
+func (m *ProcedureMutation) Manifest() (r string, exists bool) {
+	v := m.manifest
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCode returns the old "code" field's value of the Procedure entity.
+// OldManifest returns the old "manifest" field's value of the Procedure entity.
 // If the Procedure object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ProcedureMutation) OldCode(ctx context.Context) (v string, err error) {
+func (m *ProcedureMutation) OldManifest(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCode is only allowed on UpdateOne operations")
+		return v, errors.New("OldManifest is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCode requires an ID field in the mutation")
+		return v, errors.New("OldManifest requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCode: %w", err)
+		return v, fmt.Errorf("querying old value for OldManifest: %w", err)
 	}
-	return oldValue.Code, nil
+	return oldValue.Manifest, nil
 }
 
-// ResetCode resets all changes to the "code" field.
-func (m *ProcedureMutation) ResetCode() {
-	m.code = nil
+// ResetManifest resets all changes to the "manifest" field.
+func (m *ProcedureMutation) ResetManifest() {
+	m.manifest = nil
 }
 
 // Where appends a list predicates to the ProcedureMutation builder.
@@ -1326,8 +1380,8 @@ func (m *ProcedureMutation) Fields() []string {
 	if m.metadata != nil {
 		fields = append(fields, procedure.FieldMetadata)
 	}
-	if m.code != nil {
-		fields = append(fields, procedure.FieldCode)
+	if m.manifest != nil {
+		fields = append(fields, procedure.FieldManifest)
 	}
 	return fields
 }
@@ -1343,8 +1397,8 @@ func (m *ProcedureMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case procedure.FieldMetadata:
 		return m.Metadata()
-	case procedure.FieldCode:
-		return m.Code()
+	case procedure.FieldManifest:
+		return m.Manifest()
 	}
 	return nil, false
 }
@@ -1360,8 +1414,8 @@ func (m *ProcedureMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldDescription(ctx)
 	case procedure.FieldMetadata:
 		return m.OldMetadata(ctx)
-	case procedure.FieldCode:
-		return m.OldCode(ctx)
+	case procedure.FieldManifest:
+		return m.OldManifest(ctx)
 	}
 	return nil, fmt.Errorf("unknown Procedure field %s", name)
 }
@@ -1392,12 +1446,12 @@ func (m *ProcedureMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetMetadata(v)
 		return nil
-	case procedure.FieldCode:
+	case procedure.FieldManifest:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCode(v)
+		m.SetManifest(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Procedure field %s", name)
@@ -1457,8 +1511,8 @@ func (m *ProcedureMutation) ResetField(name string) error {
 	case procedure.FieldMetadata:
 		m.ResetMetadata()
 		return nil
-	case procedure.FieldCode:
-		m.ResetCode()
+	case procedure.FieldManifest:
+		m.ResetManifest()
 		return nil
 	}
 	return fmt.Errorf("unknown Procedure field %s", name)

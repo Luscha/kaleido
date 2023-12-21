@@ -26,7 +26,8 @@ func (Procedure) Fields() []ent.Field {
 			Immutable(),
 		field.String("description"),
 		field.String("metadata"),
-		field.String("code"),
+		// field.String("dependencies"),
+		field.String("manifest"),
 	}
 }
 
