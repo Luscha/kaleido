@@ -2,12 +2,14 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.pitagora/pkg/action.go"
+	"github.pitagora/pkg/automation"
 	"github.pitagora/pkg/procedure"
 	"github.pitagora/pkg/storage"
 	"gitlab.com/technity/go-x/pkg/connection"
@@ -93,6 +95,9 @@ func (s *Server) buildRouter(ctx context.Context) error {
 	s.r.POST("/action", s.Action)
 	s.r.POST("/automation/:name", s.EnableAutomation)
 	s.r.DELETE("/automation/:name", s.DisableAutomation)
+	s.r.GET("/automation/list", s.ListAutomations)
+	s.r.GET("/macro/list", s.ListMacros)
+	s.r.GET("/procedure/list", s.ListProcedures)
 	return nil
 }
 
@@ -142,4 +147,96 @@ func (s *Server) Action(c *gin.Context) {
 	}).Info("done")
 
 	c.Status(http.StatusOK)
+}
+
+func (s *Server) ListMacros(c *gin.Context) {
+	ctx := c.Request.Context()
+	co, err := s.conn.Borrow(ctx, "tenant-abc06d5-28d8-45a3-a272-f577db014f67")
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	macros, err := co.ListMacros(ctx)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, macros)
+}
+
+func (s *Server) ListProcedures(c *gin.Context) {
+	ctx := c.Request.Context()
+	co, err := s.conn.Borrow(ctx, "tenant-abc06d5-28d8-45a3-a272-f577db014f67")
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	proc, err := co.ListProcedures(ctx)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, proc)
+}
+
+func (s *Server) ListAutomations(c *gin.Context) {
+	ctx := c.Request.Context()
+	co, err := s.conn.Borrow(ctx, "tenant-abc06d5-28d8-45a3-a272-f577db014f67")
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	automs := make([]map[string]any, 0)
+	raw, err := co.ListAutomations(ctx)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	for _, a := range raw {
+		var manifest action.ActionRoot
+		if err := json.Unmarshal([]byte(a.Manifest), &manifest); err != nil {
+			c.Status(http.StatusInternalServerError)
+			return
+		}
+
+		var trigger automation.Trigger
+		if err := json.Unmarshal([]byte(a.Trigger), &trigger); err != nil {
+			c.Status(http.StatusInternalServerError)
+			return
+		}
+
+		// rawManifest, err := json.Marshal(map[string]any{
+		// 	"trigger":        trigger,
+		// 	"action":         manifest.Actions,
+		// 	"arguments":      manifest.Arguments,
+		// 	"data":           manifest.Procedure.Data,
+		// 	"procedure":      manifest.Procedure.Procedure,
+		// 	"real_procedure": manifest.Procedure.SubProcedure,
+		// })
+		// if err != nil {
+		// 	c.Status(http.StatusInternalServerError)
+		// 	return
+		// }
+		autom := map[string]any{}
+		autom["id"] = a.ID
+		autom["name"] = a.Name
+		autom["description"] = a.Description
+		autom["manifest"] = map[string]any{
+			"trigger":        trigger,
+			"action":         manifest.Actions,
+			"arguments":      manifest.Arguments,
+			"data":           manifest.Procedure.Data,
+			"procedure":      manifest.Procedure.Procedure,
+			"real_procedure": manifest.Procedure.SubProcedure,
+		}
+		automs = append(automs, autom)
+	}
+
+	c.JSON(http.StatusOK, automs)
 }
