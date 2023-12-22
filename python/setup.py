@@ -24,8 +24,12 @@ def custom_write(obj):
 	return obj
 
 def custom_import(name, globals=None, locals=None, fromlist=(), level=0):
-    if name.startswith('sklearn.'):
+    allowed_modules = ['sklearn.', 'functools']
+    
+    # Check if the import name starts with any of the allowed modules
+    if any(name.startswith(module) or name == module.rstrip('.') for module in allowed_modules):
         return __import__(name, globals, locals, fromlist, level)
+    
     raise ImportError(f"Import of '{name}' is not allowed")
 
 # Setup the restricted environment

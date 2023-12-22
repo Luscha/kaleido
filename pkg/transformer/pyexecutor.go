@@ -157,9 +157,31 @@ func (executor *PythonExecutor) ExecuteUserCode(entrypoint string, args map[stri
 	fmt.Println("localEnv:", python.PyUnicode_AsUTF8(python.PyObject_Repr(localEnv)))
 
 	result := fn.CallFunctionObjArgs(pyargs)
-	if result == nil {
+	if python.PyErr_Occurred() != nil {
 		fmt.Printf("Error calling the %s function\n", entrypoint)
-		// !TODO exepction catch and print
+		ptype, pvalue, ptraceback := python.PyErr_Fetch()
+		fmt.Println("ptype:", python.PyUnicode_AsUTF8(python.PyObject_Repr(ptype)))
+		fmt.Println("pvalue:", python.PyUnicode_AsUTF8(python.PyObject_Repr(pvalue)))
+		if ptraceback != nil {
+			// TODO
+			// Import the traceback module
+			// traceback := C.PyImport_ImportModule(C.CString("traceback"))
+			// format_exception := C.PyObject_GetAttrString(traceback, C.CString("format_exception"))
+
+			// // Get the formatted stack trace
+			// args := C.PyTuple_New(3)
+			// C.PyTuple_SetItem(args, 0, ptype)
+			// C.PyTuple_SetItem(args, 1, pvalue)
+			// C.PyTuple_SetItem(args, 2, ptraceback)
+			// pyStacktrace := C.PyObject_CallObject(format_exception, args)
+			// stacktraceStr := C.GoString(C.PyUnicode_AsUTF8(C.PyUnicode_Join(C.PyUnicode_FromString(C.CString("\n")), pyStacktrace)))
+
+			// // Print the stack trace in Go
+			// fmt.Println("Python Stack Trace:", stacktraceStr)
+		}
+		executor.AddObject(ptype)
+		executor.AddObject(pvalue)
+		executor.AddObject(ptraceback)
 		python.PyErr_Print()
 		return nil
 	}

@@ -1,0 +1,156 @@
+{
+    "data": [
+        {
+            "provider": "chrono",
+            "repository": "product-financials",
+            "name": "product-profitability",
+            "manifest": {
+                "currency": "EUR",
+                "selects": [
+                    "time",
+                    "financial_entry_type",
+                    "amount"
+                ],
+                "filters": {
+                    "time": {
+                        "between": [
+                            "2023-10-09",
+                            "2023-12-09"
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "provider": "chrono",
+            "repository": "sales",
+            "name": "sales",
+            "manifest": {
+                "selects": [
+                    "time",
+                    "customer"
+                ],
+                "filters": {
+                    "time": {
+                        "between": [
+                            "2023-10-09",
+                            "2023-12-09"
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "procedure": [
+        {
+            "step-name": "product-profitability-series",
+            "procedure-name": "time-series.py",
+            "entrypoint": "TimeSeriesGapFill",
+            "arguments": {
+                "data": {
+                    "value": "data.product-profitability"
+                },
+                "time_column": {
+                    "value": "time"
+                },
+                "amount": {
+                    "value": "amount"
+                },
+                "group_by": {
+                    "value": [
+                        "financial_entry_type"
+                    ]
+                },
+                "freq": {
+                    "value": "W"
+                }
+            }
+        },
+        {
+            "step-name": "adv",
+            "procedure-name": "adv.py",
+            "entrypoint": "Adv",
+            "arguments": {
+                "data": {
+                    "value": "procedure.product-profitability-series"
+                },
+                "amount": {
+                    "value": "amount"
+                },
+                "group_by": {
+                    "value": [
+                        "time"
+                    ]
+                }
+            }
+        },
+        {
+            "step-name": "sales-series",
+            "procedure-name": "time-series.py",
+            "entrypoint": "TimeSeriesGapFill",
+            "arguments": {
+                "data": {
+                    "value": "data.sales"
+                },
+                "time_column": {
+                    "value": "time"
+                },
+                "amount": {
+                    "value": "customer"
+                },
+                "group_by": {
+                    "value": []
+                },
+                "aggr": {
+                    "value": "distinct"
+                },
+                "freq": {
+                    "value": "W"
+                }
+            }
+        },
+        {
+            "step-name": "merge",
+            "procedure-name": "merger.py",
+            "entrypoint": "Merge",
+            "arguments": {
+                "data": {
+                    "value": [
+                        "procedure.sales-series",
+                        "procedure.adv"
+                    ]
+                },
+                "group_by": {
+                    "value": [
+                        "time"
+                    ]
+                }
+            }
+        },
+        {
+            "step-name": "cac",
+            "procedure-name": "arithm.py",
+            "entrypoint": "Arithm",
+            "arguments": {
+                "data": {
+                    "value": "procedure.merge"
+                },
+                "default": {
+                    "value": 0
+                },
+                "op": {
+                    "value": "div"
+                },
+                "columns": {
+                    "value": [
+                        "adv",
+                        "customer"
+                    ]
+                },
+                "result": {
+                    "value": "cac"
+                }
+            }
+        }
+    ]
+}

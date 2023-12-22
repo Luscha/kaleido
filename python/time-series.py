@@ -66,23 +66,36 @@ def TimeSeriesGapFill(input):
     # Set the time column as the index
     df.set_index(input["time_column"], inplace=True)
 
-    # Group by specified fields and resample to daily frequency
-    grouped = df.groupby([pd.Grouper(freq='D')] + input["group_by"])
+    freq = input.get("freq", "D")
 
+    # Group by specified fields and resample to daily frequency
+    grouped = df.groupby([pd.Grouper(freq=freq)] + input["group_by"])
+
+    aggregate_function = "sum"
+    if input.get("aggr", None):
+        if input["aggr"] == "distinct":
+            aggregate_function = lambda x: x.nunique()
+        else:
+            aggregate_function = input["aggr"]
     # Aggregate data
-    aggregated = grouped.agg({input["amount"]: 'sum'}).reset_index()
+    aggregated = grouped.agg({input["amount"]: aggregate_function}).reset_index()
 
     # Generate a complete date range
     date_range = pd.date_range(start=aggregated[input["time_column"]].min(), 
                                end=aggregated[input["time_column"]].max(), 
-                               freq='D')
-
-    # Create a MultiIndex from the product of date range and other group-by fields
-    multi_index = pd.MultiIndex.from_product([date_range] + [df[g].unique() for g in input["group_by"]], 
-                                             names=[input["time_column"]] + input["group_by"])
-
-    # Reindex the aggregated DataFrame
-    complete_df = aggregated.set_index([input["time_column"]] + input["group_by"]).reindex(multi_index, fill_value=0).reset_index()
+                               freq=freq)
+   
+    complete_df = None
+    if len(input.get("group_by", [])):
+        # Create a MultiIndex from the product of date range and other group-by fields
+        multi_index = pd.MultiIndex.from_product([date_range] + [df[g].unique() for g in input["group_by"]], 
+                                                names=[input["time_column"]] + input["group_by"])
+        # Reindex the aggregated DataFrame
+        complete_df = aggregated.set_index([input["time_column"]] + input["group_by"]).reindex(multi_index, fill_value=0).reset_index()
+    else:
+        # If group_by is empty, use the simple date range index for reindexing
+        complete_df = aggregated.set_index(input["time_column"]).reindex(date_range, fill_value=0).reset_index()
+        complete_df.rename(columns={'index': input["time_column"]}, inplace=True)
 
     return complete_df.to_json(orient='records', date_format='iso')
 

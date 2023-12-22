@@ -14,7 +14,7 @@ import (
 )
 
 const chronoEndpoint = "http://172.30.224.1:4445"
-const tenant = "tenant-9fe806d5-28d8-45a3-a272-f577db014f67"
+const tenant = "tenant-e0a5a0e3-df10-4059-a538-39033f21c4ff"
 
 func FetchChrono(ctx context.Context, manifest DataSource, results chan<- Result) {
 	startTime := time.Now()
@@ -24,7 +24,7 @@ func FetchChrono(ctx context.Context, manifest DataSource, results chan<- Result
 		"name": manifest.Name,
 	}).Info("fetching")
 
-	url := fmt.Sprintf("%s/%s/metrics/product-financials/time-partitioned", chronoEndpoint, tenant)
+	url := fmt.Sprintf("%s/%s/metrics/%s/time-partitioned", chronoEndpoint, tenant, manifest.Repository)
 	jsonManifest, err := json.Marshal(manifest.Manifest)
 	if err != nil {
 		results <- Result{ID: manifest.Name, Err: err}
