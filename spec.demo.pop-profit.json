@@ -1,0 +1,103 @@
+sales-population
+returns every how many people there is an order in each country
+
+
+{
+    "data": [
+        {
+            "provider": "chrono",
+            "repository": "sales",
+            "name": "sales",
+            "manifest": {
+                "selects": [
+                    "time",
+                    "country"
+                ],
+                "filters": {
+                    "time": {
+                        "between": [
+                            "2023-10-09",
+                            "2023-12-09"
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "provider": "memory",
+            "repository": "world.geo.json",
+            "name": "countries",
+            "manifest": {
+                
+            }
+        }
+    ],
+    "procedure": [
+        {
+            "step-name": "sales-aggr",
+            "procedure-name": "aggr.py",
+            "entrypoint": "Aggr",
+            "arguments": {
+                "data": {
+                    "value": "data.sales"
+                },
+                "group_by": {
+                    "value": ["country"]
+                },
+                "aggr": {
+                    "value": "count"
+                }
+            }
+        },
+        {
+            "step-name": "combine",
+            "procedure-name": "enricher.py",
+            "entrypoint": "Enrich",
+            "arguments": {
+                "data": {
+                    "value": [
+                        "procedure.sales-aggr",
+                        "data.countries"
+                    ]
+                },
+                "base_key_column": {
+                    "value": "country"
+                },
+                "add_key_candidates": {
+                    "value": ["iso_a2", "wb_a2"]
+                },
+                "add_columns": {
+                    "value": ["pop_est"]
+                },
+                "default": {
+                    "value": [0]
+                }
+            }
+        },
+        {
+            "step-name": "pop-profit",
+            "procedure-name": "arithm.py",
+            "entrypoint": "Arithm",
+            "arguments": {
+                "data": {
+                    "value": "procedure.combine"
+                },
+                "default": {
+                    "value": 0
+                },
+                "op": {
+                    "value": "div"
+                },
+                "columns": {
+                    "value": [
+                        "count",
+                        "pop_est"
+                    ]
+                },
+                "result": {
+                    "value": "pop_count"
+                }
+            }
+        }
+    ]
+}

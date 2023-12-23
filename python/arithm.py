@@ -22,6 +22,8 @@ def Arithm(params):
     operation = operations[params["op"]]
     df[params["result"]] = reduce(operation, [df[col] for col in params["columns"]])
 
+    # Replace inf/-inf with NaN, then replace NaN with the default value
+    df[params["result"]].replace([float('inf'), float('-inf')], pd.NA, inplace=True)
     # Replace NaN in result column with the default value
     df[params["result"]].fillna(params["default"], inplace=True)
 

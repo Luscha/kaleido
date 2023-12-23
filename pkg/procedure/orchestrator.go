@@ -75,7 +75,7 @@ func (o *Orchestrator) Run(ctx context.Context, procedure Root) (ProcedureResult
 					panic(err)
 				}
 			}
-			datasource.FetchChrono(ctx, actualData, dataCh)
+			datasource.Fetch(ctx, actualData, dataCh)
 		}(data)
 	}
 
@@ -195,7 +195,7 @@ func (o *Orchestrator) Run(ctx context.Context, procedure Root) (ProcedureResult
 					if nil != err {
 						panic(err)
 					}
-					datasource.FetchChrono(ctx, actualData, dataCh)
+					datasource.Fetch(ctx, actualData, dataCh)
 				}
 				// TODO subprocedure dependencies
 			}

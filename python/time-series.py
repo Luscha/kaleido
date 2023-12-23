@@ -71,14 +71,21 @@ def TimeSeriesGapFill(input):
     # Group by specified fields and resample to daily frequency
     grouped = df.groupby([pd.Grouper(freq=freq)] + input["group_by"])
 
-    aggregate_function = "sum"
-    if input.get("aggr", None):
-        if input["aggr"] == "distinct":
+    # Define the column name for storing the count or aggregation result
+    result_column = "count" if input.get("aggr", None) == "count" else input["amount"]
+
+    aggregate_function = input.get("aggr", "sum")
+    # Set the aggregation function
+    if aggregate_function == "count":
+        # Directly count the rows in each group and place the result in a column named "count"
+        aggregated = grouped.size().reset_index(name=result_column)
+    else:
+        if aggregate_function == "distinct":
             aggregate_function = lambda x: x.nunique()
-        else:
-            aggregate_function = input["aggr"]
-    # Aggregate data
-    aggregated = grouped.agg({input["amount"]: aggregate_function}).reset_index()
+        # Aggregate data
+        aggregated = grouped.agg({input["amount"]: aggregate_function}).reset_index()
+
+    print(aggregated.to_json(orient='records', date_format='iso'))
 
     # Generate a complete date range
     date_range = pd.date_range(start=aggregated[input["time_column"]].min(), 
