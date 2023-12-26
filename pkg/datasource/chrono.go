@@ -13,7 +13,7 @@ import (
 	"gitlab.com/technity/go-x/pkg/xhttp"
 )
 
-const chronoEndpoint = "http://172.30.224.1:4445"
+const chronoEndpoint = "http://172.18.48.1:4445"
 const tenant = "tenant-e0a5a0e3-df10-4059-a538-39033f21c4ff"
 
 func FetchChrono(ctx context.Context, manifest DataSource, results chan<- Result) {
